@@ -651,7 +651,7 @@ table.jPicker td {
     width: 108px;
 }
 .jPicker .Grid span.QuickColor {
-    cursor: url(../images/eyedropper.svg) 0 23, crosshair;
+    cursor: url(./images/eyedropper.svg) 0 23, crosshair;
     background-repeat:  no-repeat;
     display: inline-block;
     height: var(--x4);
