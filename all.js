@@ -3158,7 +3158,7 @@ const dao = [
     name: "darkmode",
     label: "Dark Mode",
     type: "boolean",
-    default: true,
+    default: false,
     private: true,
     save: true,
   },
@@ -19044,7 +19044,7 @@ MD.Darkmode = function(){
     state.set("darkmode", !state.get("darkmode"));
   });
 
-  const isDark = state.get("darkmode");
+  let isDark = state.get("darkmode");
   set(isDark);
 
   this.set = set
