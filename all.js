@@ -9945,7 +9945,8 @@ $.SvgCanvas = function (container, config) {
         });
 
         // Make sure first elements are not null
-        while (selectedElements[0] == null) selectedElements.shift(0);
+        while ((selectedElements.length > 0) && (selectedElements[0] == null)) selectedElements.shift(0);
+
     };
 
 // Function: selectOnly()
@@ -13072,6 +13073,7 @@ $.SvgCanvas = function (container, config) {
 // Returns:
 // String with the given element as an SVG tag
     this.svgToString = function (elem, indent) {
+
         var out = new Array(), toXml = svgedit.utilities.toXml;
         var unit = curConfig.baseUnit;
         var unit_re = new RegExp('^-?[\\d\\.]+' + unit + '$');
@@ -16833,7 +16835,6 @@ $.SvgCanvas = function (container, config) {
     };
 
 }
-
 const MD = {};
 
 MD.Editor = function(){
@@ -17183,7 +17184,9 @@ MD.Editor = function(){
 
   function source(){
     const textarea = editor.modal.source.el.querySelector("textarea");
+    console.log("before getSvgString");
     textarea.value = svgCanvas.getSvgString();
+    console.log("after getSvgString");
     editor.modal.source.open();
   }
 
