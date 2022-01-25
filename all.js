@@ -13688,17 +13688,17 @@ $.SvgCanvas = function (container, config) {
         styles.forEach(style => {
             var parsed = parser.parseCSS(style.textContent);
             parsed.forEach(ruleset => {
-                const els = docEl.parentNode.querySelectorAll(ruleset.selector);
-                // console.log(els);
+                let els = docEl.parentNode.querySelectorAll(ruleset.selector);
+                // if (els.length === 0) {
+                //     els = docEl.querySelectorAll(ruleset.selector);
+                // }
                 els.forEach(el => {
                     ruleset.rules.forEach(rule => {
                         let curAttr = el.getAttribute(rule.directive);
-                        if (curAttr) {
-                            // el.setAttribute(rule.directive, curAttr + "," + rule.value);
-                        } else {
+                        if (!curAttr || (curAttr.length === rule.value.length)) {
                             el.setAttribute(rule.directive, rule.value);
                         }
-                        console.log(rule.directive + " " + rule.value);
+                        // console.log(rule.directive + " " + rule.value);
                     });
                 })
             })
@@ -16858,7 +16858,7 @@ MD.Editor = function(){
 
   function clear(){
     var dims = state.get("canvasSize");
-    $.confirm("<h4>Do you want to clear the drawing?</h4><p>This will also erase your undo history</p>", function(ok) {
+    $.confirm("<h4>新建文件将会清空当前画板，确定要清空吗？</h4><p>清空后不可撤销</p>", function(ok) {
       if(!ok) return;
       state.set("canvasMode", "select")
       svgCanvas.clear();
