@@ -13122,6 +13122,7 @@ $.SvgCanvas = function (container, config) {
 
                     attr = attrs.item(i);
                     var attrVal = toXml(attr.nodeValue);
+                    attrVal = escapeHTML(attrVal);
 
                     // Namespaces have already been dealt with, so skip
                     if (attr.nodeName.indexOf('xmlns:') === 0) continue;
@@ -13686,10 +13687,17 @@ $.SvgCanvas = function (container, config) {
         styles.forEach(style => {
             var parsed = parser.parseCSS(style.textContent);
             parsed.forEach(ruleset => {
-                const els = docEl.querySelectorAll(ruleset.selector);
+                const els = docEl.parentNode.querySelectorAll(ruleset.selector);
+                console.log(els);
                 els.forEach(el => {
                     ruleset.rules.forEach(rule => {
-                        el.setAttribute(rule.directive, rule.value);
+                        let curAttr = el.getAttribute(rule.directive);
+                        if (curAttr) {
+                            // el.setAttribute(rule.directive, curAttr + "," + rule.value);
+                        } else {
+                            el.setAttribute(rule.directive, rule.value);
+                        }
+                        console.log(rule.directive + " " + rule.value);
                     });
                 })
             })
@@ -13717,6 +13725,8 @@ $.SvgCanvas = function (container, config) {
             var batchCmd = new BatchCommand("Change Source");
 
             this.prepareSvg(newDoc);
+
+            console.log(newDoc.documentElement);
 
             newDoc = this.styleToAttr(newDoc);
 
@@ -17184,9 +17194,7 @@ MD.Editor = function(){
 
   function source(){
     const textarea = editor.modal.source.el.querySelector("textarea");
-    console.log("before getSvgString");
     textarea.value = svgCanvas.getSvgString();
-    console.log("after getSvgString");
     editor.modal.source.open();
   }
 
