@@ -3234,7 +3234,7 @@ function State(){
 
   this.clean = (warn = true) => {
     if (warn) {
-      const confirmed = confirm("Clears all editor configuration and canvas, are you sure?");
+      const confirmed = confirm("你确定要清空画布和重置编辑器设置吗？");
       if (!confirmed) return;
     }
 
@@ -13332,6 +13332,7 @@ $.SvgCanvas = function (container, config) {
         });
 
         var str = this.svgCanvasToString();
+
         call("exported", {svg: str, issues: issues});
     };
 
@@ -13688,7 +13689,7 @@ $.SvgCanvas = function (container, config) {
             var parsed = parser.parseCSS(style.textContent);
             parsed.forEach(ruleset => {
                 const els = docEl.parentNode.querySelectorAll(ruleset.selector);
-                console.log(els);
+                // console.log(els);
                 els.forEach(el => {
                     ruleset.rules.forEach(rule => {
                         let curAttr = el.getAttribute(rule.directive);
@@ -23976,9 +23977,21 @@ const state = new State();
 editor.modal = {
   about: new MD.Modal({
     html: `
-      <h1>About this application</h1>
-      <p>Method Draw is a simple <a href="https://github.com/methodofaction/Method-Draw">open source</a> vector drawing application. Method Draw was forked from <a href="https://github.com/SVG-Edit/svgedit">SVG-Edit</a> several years ago with the goal of improving and modernizing the interface.</p>
-      <p>At this time (2021), the author (<a href="http://method.ac/writing">Mark MacKay</a>) is working on improving stability and improving the codebase, which contains a lot of legacy practices. The goal is to create a vector editor suitable for simple graphic design tasks.</p>
+      <h1>关于</h1>
+      <p>本SVG编辑器的改进自<a href="https://github.com/methodofaction/Method-Draw">Method Draw</a></p>
+      <div>
+        <p>目前修复了以下问题：</p>
+        <ul>
+        <li>生成SVG源码时，对CSS属性值进行转义</li>
+        <li>SVG viewBox的x或y非零时，SVG的内容出现在画布之外，无法显示</li>
+        <li>正确解析SVG中的style标签</li>
+        <li>选定对象后，查看SVG源代码卡死</li>
+        </ul> 
+        <p>未修复的已知问题：</p>
+        <ul>
+        <li>SVG中的foreignObject无法正确导出成png</li>
+        </ul> 
+      </div>
       `
   }),
   source: new MD.Modal({
@@ -24024,9 +24037,9 @@ editor.modal = {
   }),
   configure: new MD.Modal({
     html: `
-      <h1>Configuration</h1>
+      <h1>设置</h1>
       <div id="configuration">
-        <button class="warning">Erase all data</button>
+        <button class="warning">重置编辑器...</button>
         </div>
       </div>`,
     js: function(el){
@@ -24046,7 +24059,7 @@ editor.modal = {
   }),
   shortcuts: new MD.Modal({
     html: `
-      <h1>Shortcuts</h1>
+      <h1>快捷键</h1>
       <div id="shortcuts"></div>`,
     js: function(el){
       el.children[0].classList.add("modal-item-wide");
