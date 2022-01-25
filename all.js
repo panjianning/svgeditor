@@ -3955,12 +3955,16 @@ svgedit.utilities.text2xml = function(sXML) {
     dXML.async = false;
   } catch(e){ 
     throw new Error("XML Parser could not be instantiated"); 
-  };
-  try{
-    if(dXML.loadXML) out = (dXML.loadXML(sXML))?dXML:false;
-    else out = dXML.parseFromString(sXML, "text/xml");
   }
-  catch(e){ throw new Error("Error parsing XML string"); };
+  try{
+    if(dXML.loadXML) {
+      out = (dXML.loadXML(sXML)) ? dXML : false;
+    }
+    else {
+      out = dXML.parseFromString(sXML, "text/xml");
+    }
+  }
+  catch(e){ throw new Error("Error parsing XML string"); }
   return out;
 };
 
@@ -12974,11 +12978,16 @@ this.svgCanvasToString = function() {
       groupSvgElem(this);
     });
   }
-  
 
-  
   return output;
 };
+
+
+function escapeHTML(sHtml) {
+ return sHtml.replace(/[<>&"]/g,function(c){
+   return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];
+ });
+}
 
 // Function: svgToString
 // Sub function ran on each SVG element to convert it to a string as desired
@@ -13058,6 +13067,11 @@ this.svgToString = function(elem, indent) {
       for (var i=attrs.length-1; i>=0; i--) {
         attr = attrs.item(i);
         var attrVal = toXml(attr.nodeValue);
+
+        // console.log(attrVal);
+        // console.log(escapeHTML(attrVal));
+        attrVal = escapeHTML(attrVal);
+
         //remove bogus attributes added by Gecko
         if (moz_attrs.indexOf(attr.localName) >= 0) continue;
         if (attrVal != "") {
@@ -13588,7 +13602,9 @@ this.styleToAttr = function(doc) {
     parsed.forEach(ruleset => {
       const els = docEl.querySelectorAll(ruleset.selector);
       els.forEach(el => {
-        ruleset.rules.forEach(rule => el.setAttribute(rule.directive, rule.value));
+        ruleset.rules.forEach(rule => {
+          el.setAttribute(rule.directive, rule.value);
+        });
       })
     })
   });
@@ -13612,16 +13628,18 @@ this.setSvgString = function(xmlString) {
     var batchCmd = new BatchCommand("Change Source");
 
     this.prepareSvg(newDoc);
+
     newDoc = this.styleToAttr(newDoc);
-    
+
+    // console.log(newDoc.documentElement);
+
     // remove old svg document
     var nextSibling = svgcontent.nextSibling;
     var oldzoom = svgroot.removeChild(svgcontent);
     batchCmd.addSubCommand(new RemoveElementCommand(oldzoom, nextSibling, svgroot));
-  
 
     svgcontent = svgdoc.adoptNode(newDoc.documentElement);
-    
+
     svgroot.appendChild(svgcontent);
     var content = $(svgcontent);
     
@@ -18324,7 +18342,7 @@ MD.Import = function(){
       editor.saveCanvas();
       state.set("canvasTitle", svgCanvas.getDocumentTitle());
     } else {
-      $.alert("Error: Unable to load SVG data", function() {
+      $.alert("错误：无法加载该SVG", function() {
         callback(false);
       });
     }
